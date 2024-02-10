@@ -3,6 +3,9 @@ import { createUser } from '../framework/services/createUser';
 import config from '../framework/config/config';
 import { generateToken } from '../framework/services/generateToken';
 import { generateUserCredentials } from '../framework/fixtures/userFixture';
+import { getAuthorized } from '../framework/services/getAuthorized';
+import { deleteUser } from '../framework/services/deleteUser';
+import { getUserInfo } from '../framework/services/getUserInfo';
 
 describe("Bookstore api tests -- create user", () => {
 	test("User creation -- successful", async () => {
@@ -64,3 +67,26 @@ describe("Bookstore api tests -- token generate", () => {
 	});
 });
 
+describe("Work with user", () => {
+	test("Successful authorization", async () => {
+		const response = await getAuthorized(config.user.username, config.user.password);
+
+		expect(response.status).toBe(200);
+	});
+
+	test("Getting user information", async () => {
+		const response = await getUserInfo(config.userId);
+		const data = await response.json();
+
+		expect(response.status).toBe(200);
+		expect(data.userId).toBe(config.userId);
+		expect(data.username).toBe(config.user.username);
+		expect(data.books).toStrictEqual([]);
+	})
+
+	test("Successful deletion of user", async () => {
+		const response = await deleteUser(config.userId);
+
+		expect(response.status).toBe(204);
+	});
+});

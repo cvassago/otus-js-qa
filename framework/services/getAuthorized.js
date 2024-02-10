@@ -1,6 +1,8 @@
+import config from '../config/config';
+
 export async function getAuthorized(userName, password) {
 	return await fetch(
-		"https://bookstore.demoqa.com/Account/v1/Authorized",
+		`${config.baseURL}/Authorized`,
 		{
 			method: "post",
 			body: JSON.stringify({

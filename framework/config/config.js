@@ -4,6 +4,6 @@ const config = {
 	baseURL: 'https://bookstore.demoqa.com/Account/v1',
 	userId: '',
 	user: generateUserCredentials(),
-	token: 'Bearer ',
+	token: '',
 }
 export default config
