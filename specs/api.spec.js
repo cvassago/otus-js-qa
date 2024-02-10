@@ -1,4 +1,4 @@
-import { expect, describe, test } from '@jest/globals';
+import { expect, describe, test, beforeAll } from '@jest/globals';
 import { createUser } from '../framework/services/createUser';
 import config from '../framework/config/config';
 import { generateToken } from '../framework/services/generateToken';
@@ -6,6 +6,11 @@ import { generateUserCredentials } from '../framework/fixtures/userFixture';
 import { getAuthorized } from '../framework/services/getAuthorized';
 import { deleteUser } from '../framework/services/deleteUser';
 import { getUserInfo } from '../framework/services/getUserInfo';
+import { createBook } from '../framework/services/createBook';
+import { getBooksList } from '../framework/services/getBooksList';
+import { deleteBook } from '../framework/services/deleteBook';
+import { replaceBook } from '../framework/services/replaceBook';
+import { getBookInfo } from '../framework/services/getBookInfo';
 
 describe("Bookstore api tests -- create user", () => {
 	test("User creation -- successful", async () => {
@@ -67,6 +72,69 @@ describe("Bookstore api tests -- token generate", () => {
 	});
 });
 
+describe("Work with books", () => {
+	beforeAll(async () => {
+		const response = await getBooksList();
+		const data = await response.json();
+		config.isbns = data.books.map(book => book.isbn);
+	});
+
+	test("Create book", async () => {
+		const response = await createBook(config.userId, config.isbns);
+		const data = await response.json();
+
+		expect(response.status).toBe(201);
+		expect(data).toEqual({ books: config.isbns.map(isbn => ({ isbn })) });
+	});
+
+	test("Delete book", async () => {
+		const response = await deleteBook(config.userId, config.isbns[0]);
+
+		expect(response.status).toBe(204);
+	});
+
+	test("Replace book", async () => {
+		const response = await replaceBook(config.userId, config.isbns[1], config.isbns[0]);
+		const data = await response.json();
+
+		expect(response.status).toBe(200);
+		expect(data.userId).toBe(config.userId);
+		expect(data.username).toBe(config.user.username);
+	});
+
+	test.each(
+		[
+			{
+				isbn: "9781449325862",
+				code: 200,
+			},
+			{
+				isbn: "1234567890",
+				code: 400,
+				dataCode: "1205",
+				message: "ISBN supplied is not available in Books Collection!"
+			},
+		]
+	)("Get information about book", async ({ isbn, code, dataCode, message }) => {
+		console.log(config.isbns)
+
+		const response = await getBookInfo(isbn);
+		const data = await response.json();
+
+		console.log("====>>> isbn = ", isbn)
+
+		expect(response.status).toBe(code);
+		if (code === 200) {
+			console.log('ok!')
+			expect(data.isbn).toBe(isbn);
+		}
+		else {
+			expect(data.code).toBe(dataCode);
+			expect(data.message).toBe(message);
+		}
+	});
+});
+
 describe("Work with user", () => {
 	test("Successful authorization", async () => {
 		const response = await getAuthorized(config.user.username, config.user.password);
@@ -81,7 +149,6 @@ describe("Work with user", () => {
 		expect(response.status).toBe(200);
 		expect(data.userId).toBe(config.userId);
 		expect(data.username).toBe(config.user.username);
-		expect(data.books).toStrictEqual([]);
 	})
 
 	test("Successful deletion of user", async () => {
