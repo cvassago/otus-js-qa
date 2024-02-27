@@ -4,9 +4,9 @@ export async function deleteUser(userId) {
 	const urlForDelete = `${config.baseURL}/User/${userId}`;
 
 	return await fetch(urlForDelete, {
-		method: "DELETE",
+		method: 'DELETE',
 		headers: {
-			"Content-Type": "application/json",
+			'Content-Type': 'application/json',
 			Authorization: `Bearer ${config.token}`,
 		},
 	});

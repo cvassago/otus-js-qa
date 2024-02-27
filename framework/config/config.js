@@ -6,6 +6,6 @@ const config = {
 	userId: '',
 	user: generateUserCredentials(),
 	token: '',
-	isbns: []
-}
-export default config
+	isbns: [],
+};
+export default config;
