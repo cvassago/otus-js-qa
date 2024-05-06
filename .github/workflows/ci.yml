@@ -63,7 +63,7 @@ jobs:
             - name: Deploy to GitHub Pages
               id: deployment
               uses: actions/deploy-pages@v4
-    test-playwrite:
+    test-playwright:
         environment:
             name: github-pages
             url: ${{ steps.deployment.outputs.page_url }}
@@ -78,20 +78,19 @@ jobs:
                   cache: 'npm'
             - run: npm ci
             - run: npm run test:playwright
-            - run: npm run allure:ci
-            - name: Setup Pages
-              uses: actions/configure-pages@v4
-            - name: Upload artifact
-              uses: actions/upload-pages-artifact@v3
+            - uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
               with:
-                  path: 'allure-report'
+                  name: playwright-report
+                  path: playwright-report/
+                  retention-days: 30
             - name: Deploy to GitHub Pages
               id: deployment
               uses: actions/deploy-pages@v4
 
     notification:
         if: always()
-        needs: [eslint, prettier, test-jest, test-playwrite]
+        needs: [eslint, prettier, test-jest, test-playwright]
 
         environment:
             name: github-pages
