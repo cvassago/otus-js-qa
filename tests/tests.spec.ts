@@ -1,7 +1,7 @@
-import {test, expect} from "@playwright/test";
+import { test, expect } from '@playwright/test';
 
 test.describe('computer-database.gatling.io tests', async () => {
-	test('Header is link to main page', async ({page}) => {
+	test('Header is link to main page', async ({ page }) => {
 		const computerName = 'APEXC';
 
 		await page.goto('computers');
@@ -14,7 +14,7 @@ test.describe('computer-database.gatling.io tests', async () => {
 		await expect(tableRows).toContainText(computerName);
 	});
 
-	test('Form add new computer', async ({page}) => {
+	test('Form add new computer', async ({ page }) => {
 		await page.goto('computers');
 		await page.locator('#add').click();
 		await page.waitForURL('computers/new');
@@ -28,7 +28,7 @@ test.describe('computer-database.gatling.io tests', async () => {
 		await expect(page.locator('.alert-message')).toContainText('Done');
 	});
 
-	test('double click on column header sort data descending', async ({page}) => {
+	test('double click on column header sort data descending', async ({ page }) => {
 		await page.goto('computers');
 
 		await page.locator('.col-name > a').dblclick();
@@ -38,16 +38,16 @@ test.describe('computer-database.gatling.io tests', async () => {
 		await expect(firstRow).toContainText('lenovo thinkpad z61p');
 	});
 
-	test('delete button delete computer', async ({page}) => {
+	test('delete button delete computer', async ({ page }) => {
 		await page.goto('computers');
 
-		await page.locator('a').filter({hasText: 'ACE'}).click();
-		await page.locator('input[type="submit"]').filter({hasText: 'Delete this computer'}).click();
+		await page.locator('a').filter({ hasText: 'ACE' }).click();
+		await page.locator('input[type="submit"]').filter({ hasText: 'Delete this computer' }).click();
 
 		await expect(page.locator('.alert-message')).toContainText('Done');
 	});
 
-	test('button click open next page', async ({page}) => {
+	test('button click open next page', async ({ page }) => {
 		await page.goto('computers');
 
 		await page.locator('.next > a').click();

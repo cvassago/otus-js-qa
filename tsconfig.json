@@ -3,10 +3,7 @@
 		"module": "commonjs",
 		"moduleResolution": "Node",
 		"target": "ES2021",
-		"strict": true
+		"strict": true,
 	},
-	"exclude": [
-		"node_modules",
-		"**/node_modules/*"
-	]
+	"exclude": ["node_modules", "**/node_modules/*"],
 }
