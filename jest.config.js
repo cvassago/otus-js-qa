@@ -4,7 +4,7 @@ const config = {
 	collectCoverage: true,
 	coverageDirectory: 'coverage',
 	testEnvironment: 'allure-jest/node',
-	rootDir: './specs'
+	rootDir: 'specs'
 };
 
 module.exports = config;
