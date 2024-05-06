@@ -77,7 +77,7 @@ jobs:
                     node-version: 20.11.0
                     cache: 'npm'
             -   run: npm ci
-            -   run: test:playwrite
+            -   run: npm run test:playwright
             -   run: npm run allure:ci
             -   name: Setup Pages
                 uses: actions/configure-pages@v4
