@@ -38,7 +38,7 @@ jobs:
             - run: npm ci
             - run: npm run format
 
-    test:
+    test-jest:
         environment:
             name: github-pages
             url: ${{ steps.deployment.outputs.page_url }}
@@ -64,9 +64,34 @@ jobs:
               id: deployment
               uses: actions/deploy-pages@v4
 
+    test-playwright:
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 20.11.0
+                  cache: 'npm'
+            - run: npm ci
+            - run: npm run test:playwright
+            - uses: actions/upload-artifact@v4
+              if: ${{ !cancelled() }}
+              with:
+                  name: playwright-report
+                  path: playwright-report/
+                  retention-days: 30
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4
+
     notification:
         if: always()
-        needs: [eslint, prettier, test]
+        needs: [eslint, prettier, test-jest, test-playwright]
 
         environment:
             name: github-pages

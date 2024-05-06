@@ -3,3 +3,7 @@ node_modules
 coverage
 allure-results
 allure-report
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

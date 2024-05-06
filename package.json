@@ -14,6 +14,9 @@
 		"allure": "allure serve allure-results",
 		"allure:ci": "allure generate allure-results --clean",
 		"allure:ci:show": "allure open allure-report",
+		"pw:install": "npx playwright install --with-deps",
+		"pw:start": "npx playwright test",
+		"test:playwright": "run-s pw:install pw:start",
 		"test:ci": "cross-env CI=true NODE_OPTIONS=\"--max-old-space-size=2048\" jest"
 	},
 	"author": "",
@@ -24,6 +27,8 @@
 		"@babel/node": "^7.23.9",
 		"@babel/preset-env": "^7.23.8",
 		"@faker-js/faker": "^8.4.0",
+		"@playwright/test": "^1.43.1",
+		"@types/node": "^20.12.10",
 		"allure-commandline": "^2.27.0",
 		"allure-jest": "^2.12.2",
 		"cross-env": "^7.0.3",

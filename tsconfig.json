@@ -1,0 +1,9 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"moduleResolution": "Node",
+		"target": "ES2021",
+		"strict": true,
+	},
+	"exclude": ["node_modules", "**/node_modules/*"],
+}
