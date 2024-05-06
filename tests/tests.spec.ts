@@ -1,59 +1,59 @@
 import { test, expect } from '@playwright/test';
+import { ComputersPage } from '../pages/ComputersPage';
 
 test.describe('computer-database.gatling.io tests', async () => {
 	test('Header is link to main page', async ({ page }) => {
+		const computersPage = new ComputersPage(page);
 		const computerName = 'APEXC';
 
-		await page.goto('computers');
+		await computersPage.open();
+		await computersPage.search(computerName);
 
-		await page.locator('#searchbox').fill(computerName);
-		await page.locator('#searchsubmit').click();
-
-		const tableRows = page.locator('table.computers > tbody > tr');
-		await expect(tableRows).toHaveCount(1);
-		await expect(tableRows).toContainText(computerName);
+		await expect(computersPage.tableRows).toHaveCount(1);
+		await expect(computersPage.tableRows).toContainText(computerName);
 	});
 
 	test('Form add new computer', async ({ page }) => {
-		await page.goto('computers');
-		await page.locator('#add').click();
-		await page.waitForURL('computers/new');
+		const computersPage = new ComputersPage(page);
+		await computersPage.open();
 
-		await page.locator('#name').fill('computer name');
-		await page.locator('#introduced').fill('2024-05-05');
-		await page.locator('#discontinued').fill('2024-05-06');
-		await page.locator('#company').selectOption('1');
-		await page.locator('input[type="submit"]').click();
+		const newComputerPage = await computersPage.add();
+		await newComputerPage.wait();
+		await newComputerPage.nameInput.fill('computer name');
+		await newComputerPage.introducedInput.fill('2024-05-05');
+		await newComputerPage.discontinuedInput.fill('2024-05-06');
+		await newComputerPage.companySelect.selectOption('1');
+		await newComputerPage.submitButton.click();
 
-		await expect(page.locator('.alert-message')).toContainText('Done');
+		await expect(computersPage.successAlert).toBeVisible();
 	});
 
 	test('double click on column header sort data descending', async ({ page }) => {
-		await page.goto('computers');
+		const computersPage = new ComputersPage(page);
+		await computersPage.open();
 
-		await page.locator('.col-name > a').dblclick();
+		await computersPage.nameColumnHead.dblclick();
 
-		const firstRow = page.locator('table.computers > tbody > tr:first-child');
-		await expect(firstRow).toHaveCount(1);
-		await expect(firstRow).toContainText('lenovo thinkpad z61p');
+		await expect(computersPage.tableRows.nth(0)).toContainText('lenovo thinkpad z61p');
 	});
 
 	test('delete button delete computer', async ({ page }) => {
-		await page.goto('computers');
+		const computersPage = new ComputersPage(page);
+		await computersPage.open();
 
-		await page.locator('a').filter({ hasText: 'ACE' }).click();
-		await page.locator('input[type="submit"]').filter({ hasText: 'Delete this computer' }).click();
+		const editComputerPage = await computersPage.edit('ACE');
+		await editComputerPage.delete();
 
-		await expect(page.locator('.alert-message')).toContainText('Done');
+		await computersPage.successAlert.isVisible();
 	});
 
 	test('button click open next page', async ({ page }) => {
-		await page.goto('computers');
+		const computersPage = new ComputersPage(page);
+		await computersPage.open();
 
-		await page.locator('.next > a').click();
+		await computersPage.nextPage();
 
-		const firstRow = page.locator('table.computers > tbody > tr:first-child');
-		await expect(firstRow).toContainText('ASCI White');
-		await expect(page.locator('.current')).toContainText('Displaying 11 to 20');
+		await expect(computersPage.tableRows.nth(0)).toContainText('ASCI White');
+		await expect(computersPage.currentPaginationLabel).toContainText('Displaying 11 to 20');
 	});
 });
