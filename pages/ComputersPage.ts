@@ -3,6 +3,8 @@ import { NewComputerPage } from './NewComputerPage';
 import { EditComputerPage } from './EditComputerPage';
 
 export class ComputersPage {
+	public readonly url: string;
+
 	private readonly page: Page;
 
 	private readonly searchBox: Locator;
@@ -16,6 +18,8 @@ export class ComputersPage {
 	public readonly currentPaginationLabel: Locator;
 
 	constructor(page: Page) {
+		this.url = 'computers';
+
 		this.page = page;
 
 		this.searchBox = page.locator('#searchbox');
@@ -30,7 +34,7 @@ export class ComputersPage {
 	}
 
 	public async open() {
-		await this.page.goto('computers');
+		await this.page.goto(this.url);
 	}
 
 	public async search(query: string) {
