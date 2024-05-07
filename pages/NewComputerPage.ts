@@ -1,22 +1,17 @@
-import { Locator, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
+import { ComputerForm } from '../elements/ComputerForm';
 
 export class NewComputerPage {
 	private readonly page: Page;
 
-	public readonly nameInput: Locator;
-	public readonly introducedInput: Locator;
-	public readonly discontinuedInput: Locator;
-	public readonly companySelect: Locator;
-	public readonly submitButton: Locator;
+	public readonly computerForm: ComputerForm;
 
 	constructor(page: Page) {
 		this.page = page;
 
-		this.nameInput = page.locator('#name');
-		this.introducedInput = page.locator('#introduced');
-		this.discontinuedInput = page.locator('#discontinued');
-		this.companySelect = page.locator('#company');
-		this.submitButton = page.locator('input[type="submit"]');
+		const submitButton = page.locator('input[type="submit"]');
+
+		this.computerForm = new ComputerForm(page, submitButton);
 	}
 
 	public async wait() {

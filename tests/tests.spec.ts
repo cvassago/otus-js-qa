@@ -19,11 +19,11 @@ test.describe('computer-database.gatling.io tests', async () => {
 
 		const newComputerPage = await computersPage.add();
 		await newComputerPage.wait();
-		await newComputerPage.nameInput.fill('computer name');
-		await newComputerPage.introducedInput.fill('2024-05-05');
-		await newComputerPage.discontinuedInput.fill('2024-05-06');
-		await newComputerPage.companySelect.selectOption('1');
-		await newComputerPage.submitButton.click();
+		await newComputerPage.computerForm.nameInput.fill('computer name');
+		await newComputerPage.computerForm.introducedInput.fill('2024-05-05');
+		await newComputerPage.computerForm.discontinuedInput.fill('2024-05-06');
+		await newComputerPage.computerForm.companySelect.selectOption('1');
+		await newComputerPage.computerForm.submitButton.click();
 
 		await expect(computersPage.successAlert).toBeVisible();
 	});
@@ -47,7 +47,7 @@ test.describe('computer-database.gatling.io tests', async () => {
 		await computersPage.successAlert.isVisible();
 	});
 
-	test('button click open next page', async ({ page }) => {
+	test('Next page button works', async ({ page }) => {
 		const computersPage = new ComputersPage(page);
 		await computersPage.open();
 
@@ -55,5 +55,57 @@ test.describe('computer-database.gatling.io tests', async () => {
 
 		await expect(computersPage.tableRows.nth(0)).toContainText('ASCI White');
 		await expect(computersPage.currentPaginationLabel).toContainText('Displaying 11 to 20');
+	});
+
+	test('Edit form fills correctly', async ({ page }) => {
+		const computerName = 'ACE';
+
+		const computersPage = new ComputersPage(page);
+		await computersPage.open();
+
+		const editComputerPage = await computersPage.edit(computerName);
+
+		await expect(editComputerPage.computerForm.nameInput).toHaveValue(computerName);
+	});
+
+	test('Edit from saves correctly', async ({ page }) => {
+		const computersPage = new ComputersPage(page);
+		await computersPage.open();
+
+		const editComputerPage = await computersPage.edit('ACE');
+		await editComputerPage.computerForm.nameInput.fill('NEW_ACE');
+		await editComputerPage.computerForm.submitButton.click();
+
+		await expect(computersPage.successAlert).toBeVisible();
+	});
+
+	test('Edit form can be closed', async ({ page }) => {
+		const computersPage = new ComputersPage(page);
+		await computersPage.open();
+
+		const editComputerPage = await computersPage.edit('ACE');
+		await editComputerPage.computerForm.closeButton.click();
+
+		await expect(page).toHaveURL(computersPage.url);
+	});
+
+	test('Header returns on computers page', async ({ page }) => {
+		const computersPage = new ComputersPage(page);
+		await computersPage.open();
+
+		const editComputerPage = await computersPage.edit('ACE');
+		await editComputerPage.mainHeader.clickHeader();
+
+		await expect(page).toHaveURL(computersPage.url);
+	});
+
+	test('Browser go back correctly', async ({ page }) => {
+		const computersPage = new ComputersPage(page);
+		await computersPage.open();
+
+		await computersPage.edit('ACE');
+		await page.goBack();
+
+		await expect(page).toHaveURL(computersPage.url);
 	});
 });
